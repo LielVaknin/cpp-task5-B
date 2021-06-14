@@ -42,15 +42,16 @@ namespace ariel {
 
         BinaryTree(BinaryTree &&other) noexcept {
             root = other.root;
+            nodes = std::move(other.nodes);
+
             other.root = nullptr;
         }
 
         BinaryTree<T> &operator=(const BinaryTree<T> &other) {
             if (this == &other) { return *this; }
             if (root != nullptr) {
-                delete root;
-                root = nullptr;
                 nodes.clear();
+                root = nullptr;
             }
             this->root = new Node(other.root->value);
             nodes.insert(std::make_pair(this->root->value, this->root));
@@ -59,11 +60,13 @@ namespace ariel {
         }
 
         BinaryTree &operator=(BinaryTree &&other) noexcept {
-            if (root) {
-                delete root;
+            if(this != &other) {
+                nodes.clear();
+                root = other.root;
+                nodes = std::move(other.nodes);
+                other.root = nullptr;
             }
-            root = other.root;
-            other.root = nullptr;
+            return *this;
         }
 
         void deepCopy(Node *other) {
